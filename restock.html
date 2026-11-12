@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Restock Advisor — StokKu</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="js/tailwind-config.js"></script>
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+    <link rel="stylesheet" href="css/app.css" />
+  </head>
+  <body>
+    <main id="content" class="p-4 sm:p-6 lg:p-8 max-w-[1500px] mx-auto">
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+        <div>
+          <p class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-brand-600"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i>Smart feature</p>
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mt-1">Restock Advisor</h2>
+          <p class="text-sm text-ink-500 mt-1">Based on sales over the last <b id="period-label">30</b> days, supplier lead times and safety stock.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button class="btn btn-outline" id="settings-btn"><i data-lucide="sliders-horizontal"></i>Settings</button>
+          <button class="btn btn-primary" id="po-btn" disabled><i data-lucide="file-text"></i>Create Purchase Order <span id="po-count" class="bg-white/25 rounded-full px-2 text-xs">0</span></button>
+        </div>
+      </div>
+
+      <!-- Status summary -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-6 stagger" id="status-cards"></div>
+
+      <!-- How it works -->
+      <details class="card mt-5 group" id="explain">
+        <summary class="flex items-center gap-3 p-4 cursor-pointer list-none select-none">
+          <div class="kpi-icon bg-iris-50 text-iris-600 !w-9 !h-9"><i data-lucide="calculator" class="!w-4 !h-4"></i></div>
+          <span class="font-semibold text-sm flex-1">How is this calculated?</span>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-ink-400 transition group-open:rotate-180"></i>
+        </summary>
+        <div class="px-4 pb-5 grid sm:grid-cols-2 lg:grid-cols-4 gap-3 text-sm" id="formula"></div>
+      </details>
+
+      <div class="card mt-5">
+        <div class="p-4 flex flex-col lg:flex-row gap-3 lg:items-center border-b border-ink-100">
+          <div class="input-icon flex-1"><i data-lucide="search"></i><input id="search" class="input" placeholder="Search products..." /></div>
+          <select id="f-supplier" class="select lg:w-60"><option value="">All suppliers</option></select>
+          <select id="f-status" class="select lg:w-48">
+            <option value="">All statuses</option>
+            <option value="restock_now">Restock Now</option>
+            <option value="restock_soon">Restock Soon</option>
+            <option value="safe">Safe</option>
+            <option value="overstock">Overstock</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th class="w-10"><input type="checkbox" id="check-all" class="accent-brand-500 w-4 h-4" title="Select all visible" /></th>
+                <th>Product</th>
+                <th>30-day sales</th>
+                <th class="num">Stock</th>
+                <th class="num">Avg/day</th>
+                <th>Days left</th>
+                <th class="num">Safety stock</th>
+                <th class="num">Reorder point</th>
+                <th class="num" style="min-width: 120px">Suggested qty</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <script src="js/seed.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/restock.js"></script>
+    <script src="js/pages/restock.js"></script>
+  </body>
+</html>

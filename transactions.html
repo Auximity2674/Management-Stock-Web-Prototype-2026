@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transactions — StokKu</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="js/tailwind-config.js"></script>
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+    <link rel="stylesheet" href="css/app.css" />
+  </head>
+  <body>
+    <main id="content" class="p-4 sm:p-6 lg:p-8 max-w-[1500px] mx-auto">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Transaction History</h2>
+          <p class="text-sm text-ink-500 mt-1">View sale details, reprint receipts and cancel transactions.</p>
+        </div>
+        <a href="pos.html" class="btn btn-primary"><i data-lucide="scan-barcode"></i>Open POS</a>
+      </div>
+
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-6 stagger" id="summary"></div>
+
+      <div class="card mt-5">
+        <div class="p-4 flex flex-col xl:flex-row gap-3 xl:items-center border-b border-ink-100">
+          <div class="input-icon flex-1"><i data-lucide="search"></i><input id="search" class="input" placeholder="Search invoice no. or cashier name..." /></div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 xl:flex">
+            <select id="range" class="select xl:w-40">
+              <option value="0">Today</option>
+              <option value="1">Yesterday</option>
+              <option value="7" selected>Last 7 days</option>
+              <option value="30">Last 30 days</option>
+              <option value="all">All time</option>
+            </select>
+            <select id="status" class="select xl:w-36">
+              <option value="">All statuses</option>
+              <option value="completed">Completed</option>
+              <option value="voided">Void</option>
+              <option value="refunded">Refund</option>
+            </select>
+            <select id="method" class="select xl:w-40">
+              <option value="">All methods</option>
+              <option value="cash">Cash</option>
+              <option value="qris">QRIS</option>
+              <option value="transfer">Transfer</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr><th>Invoice No.</th><th>Time</th><th>Cashier</th><th class="num">Items</th><th>Method</th><th class="num">Total</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+        <div id="pager"></div>
+      </div>
+    </main>
+
+    <script src="js/seed.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/pages/transactions.js"></script>
+  </body>
+</html>

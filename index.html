@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StokKu</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <style>
+      body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #17181c; }
+      svg { width: 56px; height: 56px; animation: pulse 1s ease-in-out infinite alternate; }
+      @keyframes pulse { from { transform: scale(0.92); opacity: 0.7; } to { transform: scale(1); opacity: 1; } }
+    </style>
+  </head>
+  <body>
+    <svg viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#F2683A" /><path d="M9 12.5 16 9l7 3.5v7L16 23l-7-3.5z" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round" /><path d="M9 12.5 16 16l7-3.5M16 16v7" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round" /></svg>
+
+    <!-- Entry point: in demo mode (DB.DEMO_NO_LOGIN) go straight into the app as the owner;
+         otherwise send the visitor to the login page. -->
+    <script src="js/seed.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/layout.js"></script>
+    <script>
+      const user = Auth.ensureSession()
+      location.replace(user ? Auth.home(user.role) : 'login.html')
+    </script>
+  </body>
+</html>

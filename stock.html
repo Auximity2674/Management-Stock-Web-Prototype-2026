@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stock & Counts — StokKu</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="js/tailwind-config.js"></script>
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+    <link rel="stylesheet" href="css/app.css" />
+  </head>
+  <body>
+    <main id="content" class="p-4 sm:p-6 lg:p-8 max-w-[1500px] mx-auto">
+      <div>
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Stock & Counts</h2>
+        <p class="text-sm text-ink-500 mt-1">Record supplier deliveries, outgoing stock and physical stock counts.</p>
+      </div>
+
+      <div class="tabs mt-6" id="tabs">
+        <button class="tab active" data-tab="in"><span class="inline-flex items-center gap-2"><i data-lucide="package-plus" class="w-4 h-4"></i>Stock In</span></button>
+        <button class="tab" data-tab="out"><span class="inline-flex items-center gap-2"><i data-lucide="package-minus" class="w-4 h-4"></i>Stock Out</span></button>
+        <button class="tab" data-tab="opname"><span class="inline-flex items-center gap-2"><i data-lucide="clipboard-check" class="w-4 h-4"></i>Stock Count</span></button>
+        <button class="tab" data-tab="history"><span class="inline-flex items-center gap-2"><i data-lucide="history" class="w-4 h-4"></i>History</span></button>
+        <span class="tab-ink"></span>
+      </div>
+
+      <!-- Stock in -->
+      <section data-panel="in" class="mt-6 grid xl:grid-cols-[1fr_340px] gap-5">
+        <div class="card">
+          <div class="p-5 border-b border-ink-100 grid sm:grid-cols-2 gap-4">
+            <div><label class="label">Supplier *</label><select id="in-supplier" class="select"></select></div>
+            <div><label class="label">Delivery note / invoice no.</label><input id="in-ref" class="input" placeholder="e.g. DN-2026-0112" /></div>
+          </div>
+          <div class="p-5">
+            <label class="label">Add product</label>
+            <div data-picker="in"></div>
+            <div data-lines="in" class="mt-4"></div>
+          </div>
+        </div>
+        <aside class="card p-5 h-fit xl:sticky xl:top-24">
+          <p class="font-bold">Stock-in summary</p>
+          <div class="mt-4 space-y-2 text-sm" data-summary="in"></div>
+          <label class="label mt-4">Notes</label>
+          <textarea id="in-note" class="textarea" placeholder="Optional"></textarea>
+          <button class="btn btn-primary w-full mt-4" id="in-save" disabled><i data-lucide="check"></i>Save stock in</button>
+        </aside>
+      </section>
+
+      <!-- Stock out -->
+      <section data-panel="out" class="mt-6 grid xl:grid-cols-[1fr_340px] gap-5 hidden">
+        <div class="card">
+          <div class="p-5 border-b border-ink-100">
+            <label class="label">Reason *</label>
+            <div class="flex flex-wrap gap-2" id="out-reasons">
+              <button class="chip active" data-reason="damaged"><i data-lucide="hammer" class="w-3.5 h-3.5"></i>Damaged</button>
+              <button class="chip" data-reason="expired"><i data-lucide="calendar-x" class="w-3.5 h-3.5"></i>Expired</button>
+              <button class="chip" data-reason="lost"><i data-lucide="search-x" class="w-3.5 h-3.5"></i>Lost</button>
+              <button class="chip" data-reason="adjustment"><i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>Adjustment</button>
+              <button class="chip" data-reason="other"><i data-lucide="more-horizontal" class="w-3.5 h-3.5"></i>Other</button>
+            </div>
+          </div>
+          <div class="p-5">
+            <label class="label">Add product</label>
+            <div data-picker="out"></div>
+            <div data-lines="out" class="mt-4"></div>
+          </div>
+        </div>
+        <aside class="card p-5 h-fit xl:sticky xl:top-24">
+          <p class="font-bold">Stock-out summary</p>
+          <div class="mt-4 space-y-2 text-sm" data-summary="out"></div>
+          <label class="label mt-4">Notes</label>
+          <textarea id="out-note" class="textarea" placeholder="e.g. leaking packaging"></textarea>
+          <button class="btn btn-danger w-full mt-4" id="out-save" disabled><i data-lucide="check"></i>Save stock out</button>
+        </aside>
+      </section>
+
+      <!-- Opname -->
+      <section data-panel="opname" class="mt-6 hidden">
+        <div class="card">
+          <div class="p-4 flex flex-col lg:flex-row gap-3 lg:items-center border-b border-ink-100">
+            <div class="input-icon flex-1"><i data-lucide="search"></i><input id="op-search" class="input" placeholder="Search products..." /></div>
+            <select id="op-category" class="select lg:w-52"><option value="">All categories</option></select>
+            <label class="flex items-center gap-2 text-sm text-ink-600 whitespace-nowrap cursor-pointer"><input type="checkbox" id="op-only" class="accent-brand-500" /> Counted only</label>
+          </div>
+          <div class="table-wrap max-h-[60vh] thin-scroll">
+            <table class="table">
+              <thead class="sticky top-0 z-10">
+                <tr><th>Product</th><th class="num">System stock</th><th style="width: 160px">Physical count</th><th class="num">Difference</th><th class="num">Difference value</th></tr>
+              </thead>
+              <tbody id="op-rows"></tbody>
+            </table>
+          </div>
+          <div class="p-4 border-t border-ink-100 flex flex-col md:flex-row md:items-center gap-3">
+            <div class="flex flex-wrap gap-x-6 gap-y-1 text-sm flex-1" id="op-summary"></div>
+            <input id="op-note" class="input md:w-64" placeholder="Count notes (optional)" />
+            <button class="btn btn-outline" id="op-reset">Clear</button>
+            <button class="btn btn-primary" id="op-save" disabled><i data-lucide="clipboard-check"></i>Save adjustments</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- History -->
+      <section data-panel="history" class="mt-6 hidden">
+        <div class="card">
+          <div class="p-4 flex flex-col md:flex-row gap-3 border-b border-ink-100">
+            <div class="input-icon flex-1"><i data-lucide="search"></i><input id="h-search" class="input" placeholder="Search product, SKU or reference no...." /></div>
+            <select id="h-type" class="select md:w-48">
+              <option value="">All types</option>
+              <option value="in">Stock In</option>
+              <option value="out">Stock Out</option>
+              <option value="sale">Sale</option>
+              <option value="opname">Stock Count</option>
+              <option value="void">Void/Refund</option>
+              <option value="initial">Opening Stock</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>Time</th><th>Product</th><th>Type</th><th class="num">Qty</th><th class="num">Stock</th><th>Notes</th><th>By</th></tr></thead>
+              <tbody id="h-rows"></tbody>
+            </table>
+          </div>
+          <div id="h-pager"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/seed.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/pages/stock.js"></script>
+  </body>
+</html>

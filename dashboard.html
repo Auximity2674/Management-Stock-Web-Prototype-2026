@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard — StokKu</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="js/tailwind-config.js"></script>
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="css/app.css" />
+  </head>
+  <body>
+    <main id="content" class="p-4 sm:p-6 lg:p-8 max-w-[1500px] mx-auto">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <p class="text-sm text-ink-500" id="today-label"></p>
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mt-0.5" id="greeting">Hello 👋</h2>
+        </div>
+        <div class="flex gap-2">
+          <a href="restock.html" class="btn btn-outline"><i data-lucide="sparkles"></i>Restock</a>
+          <a href="pos.html" class="btn btn-primary"><i data-lucide="scan-barcode"></i>Open POS</a>
+        </div>
+      </div>
+
+      <!-- KPI strip -->
+      <div class="card mt-6 grid grid-cols-2 lg:grid-cols-4 overflow-hidden" id="kpis"></div>
+
+      <div class="grid xl:grid-cols-[1fr_360px] gap-5 mt-5">
+        <!-- Sales trend -->
+        <section class="card p-5 min-w-0 anim-fade-up" style="animation-delay: 0.1s">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <p class="font-bold">Sales trend</p>
+            <div class="flex flex-wrap items-center gap-2">
+              <div class="segmented" id="metric"><button class="active" data-metric="revenue">Sales</button><button data-metric="profit">Gross profit</button></div>
+              <div class="segmented" id="period"><button class="active" data-period="daily">Daily</button><button data-period="weekly">Weekly</button><button data-period="monthly">Monthly</button></div>
+            </div>
+          </div>
+          <p class="text-xs text-ink-500 mt-3" id="trend-label">Period total</p>
+          <p class="text-3xl font-extrabold tracking-tight tabular-nums whitespace-nowrap" id="trend-total">Rp 0</p>
+          <div class="h-72 mt-4 relative"><canvas id="trend-chart"></canvas></div>
+        </section>
+
+        <!-- Recent transactions timeline -->
+        <section class="card p-5 anim-fade-up" style="animation-delay: 0.15s">
+          <div class="flex items-center justify-between">
+            <p class="font-bold">Recent transactions</p>
+            <a href="transactions.html" class="text-xs font-semibold text-brand-600 hover:underline inline-flex items-center gap-0.5">View all<i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></a>
+          </div>
+          <div class="mt-4 space-y-0 max-h-[340px] overflow-y-auto thin-scroll pr-1" id="timeline"></div>
+        </section>
+      </div>
+
+      <div class="grid lg:grid-cols-2 xl:grid-cols-3 gap-5 mt-5">
+        <section class="card p-5 anim-fade-up" style="animation-delay: 0.2s">
+          <div class="flex items-center justify-between"><p class="font-bold">Best sellers</p><span class="badge badge-gray no-dot">30 days</span></div>
+          <div class="mt-4 space-y-4" id="best"></div>
+        </section>
+        <section class="card p-5 anim-fade-up" style="animation-delay: 0.25s">
+          <div class="flex items-center justify-between"><p class="font-bold">Slow movers</p><span class="badge badge-gray no-dot">30 days</span></div>
+          <div class="mt-4 space-y-3" id="slow"></div>
+        </section>
+        <section class="card p-5 anim-fade-up lg:col-span-2 xl:col-span-1" style="animation-delay: 0.3s">
+          <div class="flex items-center justify-between"><p class="font-bold">Stock alerts</p><a href="products.html?status=low" class="text-xs font-semibold text-brand-600 hover:underline">Manage</a></div>
+          <div class="segmented mt-3 w-full grid grid-cols-2" id="alert-tabs"><button class="active" data-a="out">Out</button><button data-a="low">Low</button></div>
+          <div class="mt-3 space-y-2 max-h-[280px] overflow-y-auto thin-scroll" id="alerts"></div>
+          <a href="restock.html" class="mt-4 flex items-center gap-3 p-3 rounded-xl bg-ink-900 text-white group" id="restock-cta">
+            <div class="kpi-icon bg-brand-500 !w-9 !h-9"><i data-lucide="sparkles" class="!w-4 !h-4"></i></div>
+            <div class="flex-1 text-sm"><b id="restock-count">…</b><p class="text-xs text-white/60">need restocking now, per the algorithm</p></div>
+            <i data-lucide="arrow-right" class="w-4 h-4 transition group-hover:translate-x-1"></i>
+          </a>
+        </section>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-5 mt-5">
+        <section class="card p-5 anim-fade-up" style="animation-delay: 0.35s">
+          <p class="font-bold">Sales by category <span class="text-xs font-normal text-ink-500">· 30 days</span></p>
+          <div class="grid sm:grid-cols-[200px_1fr] gap-5 items-center mt-4">
+            <div class="h-48 relative"><canvas id="cat-chart"></canvas>
+              <div class="absolute inset-0 grid place-items-center pointer-events-none"><div class="text-center"><p class="text-[11px] text-ink-500">Total</p><p class="text-sm font-bold" id="cat-total"></p></div></div></div>
+            <div class="space-y-2" id="cat-legend"></div>
+          </div>
+        </section>
+        <section class="card p-5 anim-fade-up" style="animation-delay: 0.4s">
+          <p class="font-bold">Payment methods <span class="text-xs font-normal text-ink-500">· 30 days</span></p>
+          <div class="mt-5 space-y-5" id="payments"></div>
+          <div class="mt-6 grid grid-cols-3 gap-3 text-center" id="hour-stats"></div>
+        </section>
+      </div>
+    </main>
+
+    <script src="js/seed.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/restock.js"></script>
+    <script src="js/pages/dashboard.js"></script>
+  </body>
+</html>
